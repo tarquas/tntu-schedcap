@@ -167,8 +167,9 @@ S.captureCurrent = (arg) => spawn(function*() {
   let complete = 0;
 
   let progress = (frac) => spawn(function*() {
-    if (frac instanceof Number) complete += frac;
+    if (frac.constructor.name === 'Number') complete += frac;
     else complete = frac;
+
     S.captureStatus[arg.name] = complete;
     if (arg.onProgress) yield arg.onProgress(complete);
   });

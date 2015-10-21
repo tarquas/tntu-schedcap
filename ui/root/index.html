@@ -1,0 +1,60 @@
+<!doctype html><html><head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	<title> Додаткові служби для ТНТУ </title>
+
+  <script> ApiUrl = ''; </script>
+  <script src="/js/api.js"></script>
+  <script src="/js/main.js"></script>
+
+<head><body>
+
+	<form action="http://tntu.edu.ua/" accept-charset="windows-1251">
+		<input type="hidden" name="p" value="uk/schedule">
+
+    Розклад викладача:
+
+		<datalist id="teachers">
+			<option grayed> ---- Кафедра КН ---- </option>
+			<option> Березовська Ірина Борисівна </option>
+			<option> Боднарчук Ігор Орестович </option>
+			<option> Гром'як Роман Сильвестрович </option>
+			<option> Дудкін Дмитро Павлович </option>
+			<option> Загородна Наталія Володимирівна </option>
+			<option> Карпінський Микола Петрович </option>
+			<option> Козак Руслан Орестович </option>
+      <option> Кужель Сергій Олександрович </option>
+			<option> Литвиненко Ярослав Володимирович </option>
+			<option> Маєвський Олексій Вікторович </option>
+			<option> Марценко Сергій Володимирович </option>
+			<option> Мацюк Олександр Васильович </option>
+			<option> Михайлович Тарас Володимирович </option>
+			<option> Млинко Богдана Богданівна </option>
+			<option> Назаревич Олег Богданович </option>
+			<option> Олійник Марія Зіновіївна </option>
+      <option> Пасічник Володимир Володимирович </option>
+			<option> Прошин Сергій Юрійович </option>
+			<option> Фриз Михайло Євгенович </option>
+			<option> Шимчук Григорій Валерійович </option>
+			<option> Щербак Леонід Миколайович </option>
+			<option> Яскілка Володимир Ярославович </option>
+      <option> Яциковська Уляна Олегівна </option>
+		</datalist>
+
+		<datalist id="rooms">
+		</datalist>
+    
+		<input type="text" list="teachers" name="t" autofocus>
+		<input type="submit" value="Відкрити">
+	</form>
+
+  <form action="/js-error" target="_blank" onsubmit="return Main.fillSched(this.room.value)">
+    Розклад по aудиторії: <input type="text" list="rooms" name="room" autofocus>
+		<input type="submit" value="Відкрити">
+    <noscript>(увімкіть JavaScript)</noscript>
+  </form>
+
+  <div id="sched-error" style="color: red;"></div>
+  <pre id="sched-content"></pre>
+</body></html>
