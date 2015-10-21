@@ -1,0 +1,12 @@
+web:
+  build: .
+  links:
+    - mongo
+  ports:
+    - "3081:3081"
+  environment:
+    MONGO_URI: mongodb://mongo/tntu-schedcap
+    NODE_ENV: development
+
+mongo:
+  image: mongo
