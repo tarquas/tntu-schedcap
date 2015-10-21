@@ -25,6 +25,7 @@
     "cors": "2.7.1",
     "esfunctional": "1.1.2",
     "express": "4.13.3",
+    "forever": "0.15.1",
     "iconv-lite": "0.4.13",
     "jsdom": "6.5.1",
     "moment-timezone": "0.4.1",
