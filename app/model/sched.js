@@ -107,7 +107,7 @@ S.clear = (arg) => spawn(function*() {
 //     room: String,
 //     day: Number,
 //     time: Number,
-//     week: Number,
+//     week: Number
 //   }],
 //   prof: Prof,
 // }

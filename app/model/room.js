@@ -47,4 +47,12 @@ S.get = (arg) => spawn(function*() {
   return found [mapKeys](item => item._id);
 });
 
+// {
+// }
+S.getAll = (arg) => spawn(function*() {
+  void arg;
+  let found = yield Room.find({}, {_id: 0, name: 1}).sort(byName) [catchify]();
+  return found [map](item => item.name);
+});
+
 Room = module.exports = mongoose.model('Room', schema);

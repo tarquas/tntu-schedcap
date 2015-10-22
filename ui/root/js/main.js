@@ -2,14 +2,18 @@
 
 var Main = {};
 
+Main.error = function(err) {
+  if (err) {
+    document.getElementById('sched-error').textContent = (
+      (err ? ((err.message || err) + ' ' + (err.stack || '')) : 'unknown')
+    );
+    return true;
+  } else return false;
+};
+
 Main.fillSched = function(room) {
   Api.get('/view/sched/tntu?room=' + room, {}, function(err, sched) {try {
-    if (err) {
-      document.getElementById('sched-error').textContent = (
-        'ERROR: ' + (err ? (err.message || err) : 'unknown') 
-      );
-      return;
-    }
+    if (Main.error(err)) return false;
 
     if (!sched.data) throw 'Розклад не знайдено';
 
@@ -67,11 +71,25 @@ Main.fillSched = function(room) {
         }
       }
     }
-  } catch(ee) {
-    document.getElementById('sched-error').textContent = (
-      (ee ? ((ee.message || ee) + ' ' + (ee.stack || '')) : 'unknown') 
-    );
-  }});
+  } catch(ee) {Main.error(ee);}});
 
   return false;
 };
+
+Main.fillRooms = function() {
+  Api.get('/view/sched/rooms', {}, function(err, rooms) {try {
+    if (Main.error(err)) return false;
+    var datalist = document.querySelector('datalist#rooms');
+    datalist.innerHTML = '';
+
+    for (var i = 0; i < rooms.data.length; i++) {
+      var option = document.createElement('option');
+      option.textContent = rooms.data[i];
+      datalist.appendChild(option);
+    }
+
+    return false;
+  } catch(ee) {Main.error(ee);}});
+};
+
+Main.fillRooms();

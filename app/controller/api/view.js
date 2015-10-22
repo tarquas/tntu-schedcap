@@ -2,7 +2,13 @@
 
 /* global spawnware, Router */
 
+let Room = require('model/room');
 let Sched = require('model/sched');
+
+let getSchedRooms = spawnware(function*(req) {
+  let rooms = yield Room.getAll({});
+  return {data: rooms};
+});
 
 let getSchedView = spawnware(function*(req) {
   let arg = {
@@ -16,5 +22,6 @@ let getSchedView = spawnware(function*(req) {
 });
 
 module.exports = (new Router()
+  .get('/sched/rooms', getSchedRooms)
   .get('/sched/:name', getSchedView)
 );
