@@ -30,7 +30,7 @@ Main.fillSched = function(room) {
 
         if (!dcell) tcell.innerHTML = '';
         else {
-          var cweek = [['<td colspan="2"><div></div></td>'], ['<td colspan="2"><div></div></td>']];
+          var cweek = [['<td colspan="2"><div space></div></td>'], ['<td colspan="2"><div space></div></td>']];
 
           for (var w = 1; w <= 2; w++) {
             var dweek = dcell[w];
@@ -39,7 +39,7 @@ Main.fillSched = function(room) {
             dweek.sort(function(v1, v2) {return v1.subgroup - v2.subgroup});
 
             if (dweek[0].subgroup != null) {
-              cweek[w - 1] = ['<td><div></div></td>', '<td><div></div></td>'];
+              cweek[w - 1] = ['<td><div space></div></td>', '<td><div space></div></td>'];
             }
 
             if (dweek) for (var s = 0; s < dweek.length; s++) {
@@ -47,9 +47,9 @@ Main.fillSched = function(room) {
 
               cweek[w - 1][scell.subgroup ? scell.subgroup - 1 : s] = (
                 '<td ' + (scell.subgroup == null ? 'colspan=2' : '') + '>' +
-                scell.subject + '<br>' +
-                scell.subjectType + '<br>' +
-                scell.group + '' +
+                '<div subject>' + scell.subject + '</div>' +
+                '<div subject-type>' + scell.subjectType + '</div>' +
+                '<div group>' + scell.group + '</div>' +
                 '</td>'
               );
             }
