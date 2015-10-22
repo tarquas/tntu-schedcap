@@ -10,7 +10,11 @@ Main.fillSched = function(room) {
       );
       return;
     }
-    
+
+    if (!sched.data) throw 'Розклад не знайдено';
+
+    document.getElementById('sched-error').textContent = '';
+
     //document.getElementById('sched-content').textContent = (
     //  JSON.stringify(sched, null, 2)
     //);
@@ -26,7 +30,7 @@ Main.fillSched = function(room) {
 
         if (!dcell) tcell.innerHTML = '';
         else {
-          var cweek = [['<td colspan="2"> &nbsp; </td>'], ['<td colspan="2"> &nbsp; </td>']];
+          var cweek = [['<td colspan="2"><div></div></td>'], ['<td colspan="2"><div></div></td>']];
 
           for (var w = 1; w <= 2; w++) {
             var dweek = dcell[w];
@@ -35,7 +39,7 @@ Main.fillSched = function(room) {
             dweek.sort(function(v1, v2) {return v1.subgroup - v2.subgroup});
 
             if (dweek[0].subgroup != null) {
-              cweek[w - 1] = ['<td> &nbsp; </td>', '<td> &nbsp; </td>'];
+              cweek[w - 1] = ['<td><div></div></td>', '<td><div></div></td>'];
             }
 
             if (dweek) for (var s = 0; s < dweek.length; s++) {
@@ -65,7 +69,7 @@ Main.fillSched = function(room) {
     }
   } catch(ee) {
     document.getElementById('sched-error').textContent = (
-      'ERROR: ' + (ee ? (ee.stack || ee.message || ee) : 'unknown') 
+      (ee ? ((ee.message || ee) + ' ' + (ee.stack || '')) : 'unknown') 
     );
   }});
 
