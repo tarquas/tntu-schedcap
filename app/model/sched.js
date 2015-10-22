@@ -42,7 +42,7 @@ S.getByRoom = (arg) => spawn(function*() {
   if (!resolved.length) return null;
   query.room = resolved[0]._id;
 
-  let proj = ({group: 1, subgroups: 1, subject: 1, subjectType: 1, prof: 1}) [defaults](queryProj);
+  let proj = ({group: 1, subgroup: 1, subject: 1, subjectType: 1, prof: 1}) [defaults](queryProj);
   let sort = byRoom;
 
   let found = yield (
@@ -55,8 +55,8 @@ S.getByRoom = (arg) => spawn(function*() {
   );
 
   let result = (
-    found [groupBy](item => item.day) [mapValues](itemsByDay => (
-      itemsByDay [groupBy](item => item.time) [mapValues](itemsByTime => (
+    found [groupBy](item => item.time /* item.day */) [mapValues](itemsByDay => (
+      itemsByDay [groupBy](item => item.day /* item.time */) [mapValues](itemsByTime => (
         itemsByTime [groupBy](item => item.week) [mapValues](itemsByWeek => (
           itemsByWeek [map](item => ({
             room: arg.room,

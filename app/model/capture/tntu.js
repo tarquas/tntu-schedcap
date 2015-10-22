@@ -193,15 +193,15 @@ S.captureCurrent = (arg) => spawn(function*() {
         console.log('Capturing sched for ' + group.title);
         let captured = yield S.getSched(group);
 
-        for (let dayIdx = 0; dayIdx < captured.length; dayIdx++) {
-          let day = dayIdx + 1;
-          let byDay = captured[dayIdx];
-          
-          for (let periodIdx = 0; periodIdx < byDay.length; periodIdx++) {
-            let period = periodIdx + 1;
-            let byPeriod = byDay[periodIdx];
+        for (let periodIdx = 0; periodIdx < captured.length; periodIdx++) {
+          let period = periodIdx + 1;
+          let byPeriod = captured[periodIdx];
 
-            for (let item of byPeriod) {
+          for (let dayIdx = 0; dayIdx < byPeriod.length; dayIdx++) {
+            let day = dayIdx + 1;
+            let byDay = byPeriod[dayIdx];
+
+            for (let item of byDay) {
               let pre = ({
                 name: arg.name,
                 day: day,
