@@ -49,13 +49,13 @@ Main.fillSched = function(room) {
             if (dweek) for (var s = 0; s < dweek.length; s++) {
               var scell = dweek[s];
 
-              cweek[w - 1][scell.subgroup ? scell.subgroup - 1 : s] = (
-                '<td ' + (scell.subgroup == null ? 'colspan=2' : '') + '>' +
-                '<div subject>' + scell.subject + '</div>' +
-                '<div subject-type>' + scell.subjectType + '</div>' +
-                '<div group>' + scell.group + '</div>' +
-                '</td>'
-              );
+              cweek[w - 1][scell.subgroup ? scell.subgroup - 1 : s] = ('<td ' +
+                (scell.subgroup == null ? 'colspan=2' : '') + '>' +
+                (scell.subject ? '<div subject>' + scell.subject + '</div>' : '') +
+                (scell.subjectType ? '<div subject-type>' + scell.subjectType + '</div>' : '') +
+                (scell.group ? '<div group>' + scell.group + '</div>' : '') +
+                (scell.prof ? '<div prof>' + scell.prof + '</div>' : '') +
+              '</td>');
             }
           }
           
@@ -64,8 +64,8 @@ Main.fillSched = function(room) {
 
           tcell.innerHTML = (
             '<table class="sched-cell" width="100%" height="100%" border="1" cellspacing="0">' +
-            ('<tr>' + w1 + '</tr>') +
-            (w1 !== w2 ? '<tr>' + w2 + '</tr>' : '') +
+              ('<tr>' + w1 + '</tr>') +
+              (w1 !== w2 ? '<tr>' + w2 + '</tr>' : '') +
             '</table>'
           );
         }

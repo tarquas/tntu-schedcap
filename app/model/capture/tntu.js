@@ -11,6 +11,7 @@ let Sched = require('model/sched');
 
 let jsdom = require('jsdom');
 let iconv = require('iconv-lite');
+let web = require('helper/web');
 
 iconv.skipDecodeWarning = true;
 
@@ -20,6 +21,7 @@ let S = module.exports;
 
 S.config = {
   schedUrl: 'http://tntu.edu.ua/?p=uk/schedule/',
+  profUrl: 'http://elartu.tntu.edu.ua:8080/authors/data/statistic_authors_table.csv',
 
   dom: {
     encoding: 'binary',
@@ -32,6 +34,11 @@ S.config = {
 };
 
 S.text = node => iconv.decode(node.textContent, 'windows-1251').trim();
+
+S.urlencode = s => (
+  !s ? '' :
+  '%' + iconv.encode(s, 'windows-1251').toString('hex').toUpperCase().match(/../g).join('%')
+);
 
 S.getFaculties = () => spawn(function*() {
   let root = yield jsdom [promisify]('env')(S.config.schedUrl, S.config.dom);
@@ -62,6 +69,9 @@ S.getGroups = (faculty) => spawn(function*() {
 S.getSched = (group) => spawn(function*() {
   let root = yield jsdom [promisify]('env')(group.schedUrl, S.config.dom);
   let tabHead = root.document.querySelector('#ScheduleWeek');
+
+  if (!tabHead) return false;
+
   let tab = tabHead.lastChild;
 
   let colSpans = [].slice.call(tabHead.rows[0].cells, 1).map(cell => cell.colSpan || 1);
@@ -155,7 +165,33 @@ S.getSched = (group) => spawn(function*() {
   return results;
 });
 
-S.captureStatus = {};
+S.getProfs = () => spawn(function*() {
+  let tabbed = yield web.get(S.config.profUrl);
+  let lines = tabbed.data.split(/[\r\n]+/);
+
+  lines.shift();
+
+  let profs = lines.map(line => {
+    let ent = line.match(/[^\t]*\t([^\t]*)\t/);
+
+    return ent && {
+      name: ent[1],
+      title: ent[2],
+      schedUrl: S.config.schedUrl + '&t=' + S.urlencode(ent[1])
+    };
+  }).filter(v => v);
+
+  return profs;
+});
+
+S.captureStatus = {
+  progress: (name, frac, on) => spawn(function*() {
+    if (frac && frac.constructor.name === 'Number') S.captureStatus[name] += frac;
+    else S.captureStatus[name] = frac;
+    if (on) yield on(S.captureStatus[name]);
+    return S.captureStatus[name];
+  })
+};
 
 // {
 //   name: String,
@@ -163,17 +199,7 @@ S.captureStatus = {};
 // }
 S.captureCurrent = (arg) => spawn(function*() {
   if (typeof S.captureStatus[arg.name] === 'number') return false;
-
-  let complete = 0;
-
-  let progress = (frac) => spawn(function*() {
-    if (frac.constructor.name === 'Number') complete += frac;
-    else complete = frac;
-
-    S.captureStatus[arg.name] = complete;
-    if (arg.onProgress) yield arg.onProgress(complete);
-  });
-
+  let progress = (frac) => S.captureStatus.progress(arg.name, frac, arg.onProgress);
   yield progress(0);
 
   try {
@@ -223,7 +249,9 @@ S.captureCurrent = (arg) => spawn(function*() {
         }
 
         yield progress(1 / (groupsCap.length * faculties.length));
+        break;
       }
+      break;
     }
 
     let subjectRes = yield Subject.resolve({
@@ -255,6 +283,97 @@ S.captureCurrent = (arg) => spawn(function*() {
 
     yield Sched.clear({name: arg.name});
     yield Sched.set({scheds: preSched});
+
+    yield progress('done');
+    delete S.captureStatus[arg.name];
+    return true;
+
+  } catch (err) {
+    yield progress(err);
+    throw err;
+  }
+});
+
+// {
+//   name: String,
+//   onProgress: function(frac),
+// }
+S.captureProfCurrent = (arg) => spawn(function*() {
+  if (typeof S.captureStatus[arg.name] === 'number') return false;
+  let progress = (frac) => S.captureStatus.progress(arg.name, frac, arg.onProgress);
+  yield progress(0);
+
+  try {
+    let profsCap = yield S.getProfs();
+
+    let preScheds = {};
+    let profs = {};
+    let rooms = {};
+
+    for (let prof of profsCap) {
+      if (prof.name !== 'Ковбашин Василь Іванович') continue;
+      
+      yield delay(5000);
+
+      console.log('Capturing prof sched for ' + prof.name);
+
+      let captured = yield S.getSched(prof);
+      if (!captured) continue;
+
+      let preSched = [];
+      preScheds[prof.name] = preSched;
+
+      profs[prof.name] = true;
+
+      for (let periodIdx = 0; periodIdx < captured.length; periodIdx++) {
+        let period = periodIdx + 1;
+        let byPeriod = captured[periodIdx];
+
+        for (let dayIdx = 0; dayIdx < byPeriod.length; dayIdx++) {
+          let day = dayIdx + 1;
+          let byDay = byPeriod[dayIdx];
+
+          for (let item of byDay) {
+            let pre = ({
+              name: arg.name,
+              day: day,
+              time: period
+            }) [defaults](item);
+
+            rooms[pre.room] = true;
+
+            if (pre.week == null) {
+              preSched.push(({week: 1}) [defaults](pre));
+              preSched.push(({week: 2}) [defaults](pre));
+            } else preSched.push(pre);
+          }
+        }
+      }
+
+      yield progress(1 / profsCap.length);
+      break;
+    }
+
+    let profRes = yield Prof.resolve({
+      items: profs [keys]() [map](name => ({name: name})),
+      create: true
+    });
+
+    let roomRes = yield Room.resolve({
+      items: rooms [keys]() [map](name => ({name: name})),
+      create: true
+    });
+
+    for (let prof in preScheds) {
+      let profId = profRes[prof]._id;
+      let preSched = preScheds[prof];
+
+      for (let pre of preSched) {
+        pre.room = roomRes[pre.room]._id;
+      }
+
+      yield Sched.setProf({prof: profId, scheds: preSched});
+    }
 
     yield progress('done');
     delete S.captureStatus[arg.name];

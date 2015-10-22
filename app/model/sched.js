@@ -55,8 +55,8 @@ S.getByRoom = (arg) => spawn(function*() {
   );
 
   let result = (
-    found [groupBy](item => item.time /* item.day */) [mapValues](itemsByDay => (
-      itemsByDay [groupBy](item => item.day /* item.time */) [mapValues](itemsByTime => (
+    found [groupBy](item => item.day) [mapValues](itemsByDay => (
+      itemsByDay [groupBy](item => item.time) [mapValues](itemsByTime => (
         itemsByTime [groupBy](item => item.week) [mapValues](itemsByWeek => (
           itemsByWeek [map](item => ({
             room: arg.room,
@@ -114,7 +114,7 @@ S.clear = (arg) => spawn(function*() {
 S.setProf = (arg) => spawn(function*() {
   if (arg.scheds.length) {
     yield Sched.update(
-      {$or: arg.scheds},
+      {$or: arg.scheds [map](sched => sched [pick](byRoom [keys]()))},
       {$set: {prof: arg.prof}},
       {multi: true}
     ) [catchify]();
