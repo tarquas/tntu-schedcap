@@ -249,9 +249,7 @@ S.captureCurrent = (arg) => spawn(function*() {
         }
 
         yield progress(1 / (groupsCap.length * faculties.length));
-        break;
       }
-      break;
     }
 
     let subjectRes = yield Subject.resolve({
@@ -310,9 +308,7 @@ S.captureProfCurrent = (arg) => spawn(function*() {
     let profs = {};
     let rooms = {};
 
-    for (let prof of profsCap) {
-      if (prof.name !== 'Ковбашин Василь Іванович') continue;
-      
+    for (let prof of profsCap) {      
       yield delay(5000);
 
       console.log('Capturing prof sched for ' + prof.name);
@@ -351,7 +347,6 @@ S.captureProfCurrent = (arg) => spawn(function*() {
       }
 
       yield progress(1 / profsCap.length);
-      break;
     }
 
     let profRes = yield Prof.resolve({
