@@ -12,6 +12,7 @@ table#sched-table th {
 table#sched-table td {
   text-align: center;
   font-size: smaller;
+  height: 0px;
 }
 
 table.sched-cell {
