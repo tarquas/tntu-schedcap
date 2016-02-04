@@ -19,11 +19,12 @@ let getSchedProfs = spawnware(function*(req) {
 let getSchedView = spawnware(function*(req) {
   let arg = {
     name: req.params.name,
-    room: req.query.room
+    room: req.query.room,
+    prof: req.query.prof
   };
 
-  if (arg.room) {
-    return {data: yield Sched.getByRoom(arg)};
+  if (arg.room || arg.prof) {
+    return {data: yield Sched.get(arg)};
   } else throw ['badArgument'];
 });
 

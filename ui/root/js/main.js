@@ -11,8 +11,12 @@ Main.error = function(err) {
   } else return false;
 };
 
-Main.fillSched = function(room) {
-  Api.get('/view/sched/tntu?room=' + room, {}, function(err, sched) {try {
+Main.fillSched = function(arg) {
+  var args = [];
+
+  for (var i in arg) args.push(i + '=' + encodeURIComponent(arg[i]));
+
+  Api.get('/view/sched/tntu?' + args.join('&'), {}, function(err, sched) {try {
     if (Main.error(err)) return false;
 
     if (!sched.data) throw 'Розклад не знайдено';
@@ -95,7 +99,7 @@ Main.fillRooms = function() {
 Main.fillProfs = function() {
   Api.get('/view/sched/profs', {}, function(err, profs) {try {
     if (Main.error(err)) return false;
-    var datalist = document.querySelector('datalist#teachers');
+    var datalist = document.querySelector('datalist#profs');
     datalist.innerHTML = '';
 
     for (var i = 0; i < profs.data.length; i++) {

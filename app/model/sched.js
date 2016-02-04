@@ -6,6 +6,7 @@
 
 let Sched;
 let Room;
+let Prof;
 
 let schema = new Schema({
   name: String,
@@ -25,46 +26,67 @@ let schema = new Schema({
 let byRoom = {name: 1, room: 1, day: 1, time: 1, week: 1};
 schema.index(byRoom, {unique: true});
 
+let byProf = {name: 1, prof: 1, day: 1, time: 1, week: 1};
+schema.index(byProf, {unique: true});
+
 let S = schema.statics;
 
 // {
 //   name: String, //required
-//   room: String,
+//   room: String, // \_ either
+//   prof: String, // /
 //   day: Number,
 //   time: Number,
 //   week: Number,
 // }
-S.getByRoom = (arg) => spawn(function*() {
-  let queryProj = {name: 1, room: 1, day: 1, time: 1, week: 1};
-  let query = arg [pick](queryProj [keys]());
+S.get = (arg) => spawn(function*() {
+  if (!arg.room && !arg.prof) throw ['badArgument'];
 
-  let resolved = (yield Room.resolve({items: [{name: query.room}]})) [map]();
-  if (!resolved.length) return null;
-  query.room = resolved[0]._id;
+  let queryProj = {name: 1, room: 1, prof: 1, day: 1, time: 1, week: 1};
+  let query = arg [pick](queryProj [keys]()) [pick](v => v != null);
 
-  let proj = ({group: 1, subgroup: 1, subject: 1, subjectType: 1, prof: 1}) [defaults](queryProj);
-  let sort = byRoom;
+  let resolved = yield Promise.all([
+    !query.room ? {} : Room.resolve({items: [{name: query.room}]}),
+    !query.prof ? {} : Prof.resolve({items: [{name: query.prof}]})
+  ]);
 
-  let found = yield (
-    Sched.find(query, proj).sort(sort)
-    .populate('group')
-    .populate('subject')
-    .populate('subjectType')
-    .populate('prof')
-    .exec() [catchify]()
-  );
+  let resolvedMap = resolved.map(item => item [map]());
+
+  if (query.room) {
+    if (!resolvedMap[0].length) return null;
+    query.room = resolvedMap[0][0]._id;
+  }
+
+  if (query.prof) {
+    if (!resolvedMap[1].length) return null;
+    query.prof = resolvedMap[1][0]._id;
+  }
+
+  let proj = ({group: 1, subgroup: 1, subject: 1, subjectType: 1}) [defaults](queryProj);
+  let sort = arg.prof ? byProf : byRoom;
+
+  let cmd = Sched.find(query, proj).sort(sort);
+
+  cmd.populate('group', {name: 1});
+  cmd.populate('subject', {name: 1});
+  cmd.populate('subjectType', {name: 1})
+
+  if (!arg.room) cmd.populate('room', {name: 1});
+  if (!arg.prof) cmd.populate('prof', {name: 1});
+
+  let found = yield cmd.exec() [catchify]();
 
   let result = (
     found [groupBy](item => item.day) [mapValues](itemsByDay => (
       itemsByDay [groupBy](item => item.time) [mapValues](itemsByTime => (
         itemsByTime [groupBy](item => item.week) [mapValues](itemsByWeek => (
           itemsByWeek [map](item => ({
-            room: arg.room,
+            room: arg.room || (item.room && item.room.name),
             group: item.group && item.group.name,
             subgroup: item.subgroup,
             subject: item.subject && item.subject.name,
             subjectType: item.subjectType && item.subjectType.name,
-            prof: item.prof && item.prof.name
+            prof: arg.prof && (item.prof && item.prof.name)
           }))
         ))
       ))
@@ -123,3 +145,4 @@ S.setProf = (arg) => spawn(function*() {
 
 Sched = module.exports = mongoose.model('Sched', schema);
 Room = require('model/room');
+Prof = require('model/prof');
