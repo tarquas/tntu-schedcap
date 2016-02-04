@@ -58,11 +58,12 @@ Main.fillSched = function(arg) {
                 (scell.subject ? '<div subject>' + scell.subject + '</div>' : '') +
                 (scell.subjectType ? '<div subject-type>' + scell.subjectType + '</div>' : '') +
                 (scell.group ? '<div group>' + scell.group + '</div>' : '') +
+                (scell.room ? '<div room>' + scell.room + '</div>' : '') +
                 (scell.prof ? '<div prof>' + scell.prof + '</div>' : '') +
               '</td>');
             }
           }
-          
+
           var w1 = cweek[0].join('');
           var w2 = cweek[1].join('');
 
