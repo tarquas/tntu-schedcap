@@ -86,7 +86,7 @@ S.get = (arg) => spawn(function*() {
             subgroup: item.subgroup,
             subject: item.subject && item.subject.name,
             subjectType: item.subjectType && item.subjectType.name,
-            prof: arg.prof && (item.prof && item.prof.name)
+            prof: arg.prof || (item.prof && item.prof.name)
           }))
         ))
       ))
