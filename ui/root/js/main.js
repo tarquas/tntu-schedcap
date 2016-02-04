@@ -92,4 +92,21 @@ Main.fillRooms = function() {
   } catch(ee) {Main.error(ee);}});
 };
 
+Main.fillProfs = function() {
+  Api.get('/view/sched/profs', {}, function(err, profs) {try {
+    if (Main.error(err)) return false;
+    var datalist = document.querySelector('datalist#teachers');
+    datalist.innerHTML = '';
+
+    for (var i = 0; i < profs.data.length; i++) {
+      var option = document.createElement('option');
+      option.textContent = profs.data[i];
+      datalist.appendChild(option);
+    }
+
+    return false;
+  } catch(ee) {Main.error(ee);}});
+};
+
 Main.fillRooms();
+Main.fillProfs();

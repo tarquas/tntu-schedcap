@@ -47,4 +47,12 @@ S.get = (arg) => spawn(function*() {
   return found [mapKeys](item => item._id);
 });
 
+// {
+// }
+S.getAll = (arg) => spawn(function*() {
+  void arg;
+  let found = yield Prof.find({}, {_id: 0, name: 1}).sort(byName) [catchify]();
+  return found [map](item => item.name);
+});
+
 Prof = module.exports = mongoose.model('Prof', schema);
