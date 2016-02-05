@@ -29,7 +29,7 @@
   <form name="room-sched" action="/js-error" onsubmit="return Main.fillSched({room: this.room.value})"></form>
     <span class="sched-form-label"> Аудиторія: </span>
     <input type="text" list="rooms" name="room" autofocus>
-    <input type="button" value="Розклад аудиторії">
+    <input type="submit" value="Розклад аудиторії">
     <input type="button" value="Розклад викладача в аудиторії"
       onclick="Main.fillSched({room: this.form.room.value, prof: document.forms['prof-sched'].t.value})">
   </form>
