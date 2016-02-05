@@ -27,7 +27,7 @@ let byRoom = {name: 1, room: 1, day: 1, time: 1, week: 1};
 schema.index(byRoom, {unique: true});
 
 let byProf = {name: 1, prof: 1, day: 1, time: 1, week: 1};
-schema.index(byProf, {unique: true});
+schema.index(byProf);
 
 let S = schema.statics;
 
