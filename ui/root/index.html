@@ -10,30 +10,29 @@
   <script src="/js/main.js"></script>
 
 <head><body>
+  <noscript>(увімкіть JavaScript)</noscript>
 
-	<form name="prof-sched" action="http://tntu.edu.ua/" accept-charset="windows-1251">
-		<input type="hidden" name="p" value="uk/schedule">
+  <datalist id="profs">
+  </datalist>
 
-    Розклад викладача:
+  <datalist id="rooms">
+  </datalist>
 
-		<datalist id="profs">
-		</datalist>
-
-		<datalist id="rooms">
-		</datalist>
-    
-		<input type="text" list="profs" name="t" autofocus>
+  <form name="prof-sched" action="http://tntu.edu.ua/" accept-charset="windows-1251">
+    <input type="hidden" name="p" value="uk/schedule">
+    <span class="sched-form-label"> Викладач: </span>
+    <input type="text" list="profs" name="t" autofocus>
     <input type="button" value="Розклад викладача" onclick="Main.fillSched({prof: this.form.t.value})">
-		<input type="submit" value="Розклад викладача на сайті ТНТУ">
-	</form>
+    <input type="submit" value="Розклад викладача на сайті ТНТУ">
+  </form>
 
-  <form name="room-sched" action="/js-error" target="_blank" onsubmit="return Main.fillSched({room: this.room.value})">
-    Розклад по aудиторії: <input type="text" list="rooms" name="room" autofocus>
-		<input type="submit" value="Розклад аудиторії">
+  <div>
+    <span class="sched-form-label"> Аудиторія: </span>
+    <input type="text" list="rooms" name="room" autofocus>
+    <input type="button" value="Розклад аудиторії" onclick="Main.fillSched({room: this.form.room.value})">
     <input type="button" value="Розклад викладача в аудиторії"
       onclick="Main.fillSched({room: this.form.room.value, prof: document.forms['prof-sched'].t.value})">
-    <noscript>(увімкіть JavaScript)</noscript>
-  </form>
+  </div>
 
   <div id="sched-error" style="color: red;"></div>
 
