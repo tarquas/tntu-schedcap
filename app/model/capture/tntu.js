@@ -143,7 +143,7 @@ S.getSched = (group) => spawn(function*() {
       rowSpansLeft[colSpanIdx] -= coverage;
       rowSpansLeftN -= coverage;
 
-      let lesson = cell.querySelector('div.Lesson');
+      let lesson = cell.querySelector('div');
       let info = cell.querySelector('div.Info');
 
       if (lesson && info) {
