@@ -23,7 +23,7 @@
     "chalk": "1.1.1",
     "compression": "1.6.0",
     "cors": "2.7.1",
-    "esfunctional": "1.1.2",
+    "esfunctional": "1.11.1",
     "express": "4.13.3",
     "forever": "0.15.1",
     "iconv-lite": "0.4.13",
@@ -43,5 +43,9 @@
     "jshint": "2.8.0",
     "jshint-stylish-ex": "0.2.0",
     "jsinspect": "0.7.0"
+  },
+  "engines": {
+    "node": "10.15.0",
+    "npm": "6.4.1"
   }
 }
