@@ -29,7 +29,7 @@
     "iconv-lite": "0.4.13",
     "jsdom": "6.5.1",
     "moment-timezone": "0.4.1",
-    "mongoose": "4.1.10",
+    "mongoose": "5.9.2",
     "mongoose-hook": "0.1.5",
     "mongoose-hook-createdmodified": "0.1.4",
     "mongoose-hook-custom-id": "0.1.4",
