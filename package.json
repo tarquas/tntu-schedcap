@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "app-module-path": "1.0.4",
-    "axios": "0.7.0",
+    "axios": "0.12.0",
     "chalk": "1.1.1",
     "compression": "1.6.0",
     "cors": "2.7.1",
@@ -29,7 +29,7 @@
     "iconv-lite": "0.4.13",
     "jsdom": "6.5.1",
     "moment-timezone": "0.4.1",
-    "mongoose": "4.1.10",
+    "mongoose": "5.7.7",
     "mongoose-hook": "0.1.5",
     "mongoose-hook-createdmodified": "0.1.4",
     "mongoose-hook-custom-id": "0.1.4",
